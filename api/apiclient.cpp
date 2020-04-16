@@ -4,7 +4,10 @@
 
 ApiClient::ApiClient(QObject *parent) : QObject(parent)
 {
-
+    connect(&m_accessManager, &QNetworkAccessManager::sslErrors, [=](QNetworkReply *reply, const QList<QSslError> &errors){
+        Q_UNUSED(errors)
+        reply->ignoreSslErrors();
+    });
 }
 
 void ApiClient::login(const QString &login, const QString &password)
