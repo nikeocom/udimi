@@ -104,7 +104,7 @@ Rectangle {
                             anchors.left: parent.left
                             anchors.leftMargin: 20
                             spacing: 20
-                            Image {
+                            CircularImage {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: 50
                                 height: width

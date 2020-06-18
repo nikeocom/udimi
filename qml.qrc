@@ -4,5 +4,6 @@
         <file>Login.qml</file>
         <file>Projects.qml</file>
         <file>ProjectInfo.qml</file>
+        <file>CircularImage.qml</file>
     </qresource>
 </RCC>

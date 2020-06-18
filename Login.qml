@@ -6,6 +6,15 @@ Rectangle {
 
     implicitHeight: __layout.implicitHeight + 40
 
+    Connections {
+        target: client
+        onAuthFailed: {
+            busyIndicator.running = false
+            loginButton.visible = true
+            errorString.text = error
+        }
+    }
+
     Rectangle {
         anchors.centerIn: parent
         width: 600
@@ -31,6 +40,7 @@ Rectangle {
                 width: parent.width
                 inputMethodHints: Qt.ImhEmailCharactersOnly
                 placeholderText: qsTr("Email")
+                selectByMouse: true
             }
 
             TextField {
@@ -38,16 +48,42 @@ Rectangle {
                 width: parent.width
                 placeholderText: qsTr("Password")
                 echoMode: TextInput.Password
-
+                selectByMouse: true
             }
 
-            Button {
-                text: qsTr("LOGIN")
-                enabled: loginField.text != "" && passwordField.text != ""
+            Row {
+                spacing: 5
+                Button {
+                    id: loginButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: qsTr("LOGIN")
+                    enabled: loginField.text != "" && passwordField.text != ""
 
-                onClicked: {
-                    client.login(loginField.text, passwordField.text)
+                    onClicked: {
+                        visible = false
+                        errorString.text = ""
+                        busyIndicator.running = true
+                        client.login(loginField.text, passwordField.text)
+
+                    }
                 }
+
+                Label {
+                    id: errorString
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "red"
+                    font.pixelSize: 10
+                }
+            }
+
+            BusyIndicator {
+                id: busyIndicator
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                width: 30
+                height: 30
+                visible: running
+                running: false
             }
         }
     }

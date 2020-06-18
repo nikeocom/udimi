@@ -69,26 +69,27 @@ void ApiClient::onNetworkReplyFinished()
 
     RequestType type = m_replyHash.take(reply);
 
+    const QJsonObject &response = QJsonDocument::fromJson(reply->readAll()).object();
+
+    qDebug() << response;
+
     switch (type) {
     case RequestType::Login: {
         if (reply->error() == QNetworkReply::NoError) {
-            const QJsonObject &response = QJsonDocument::fromJson(reply->readAll()).object();
             m_accessToken = response.value("token").toString();
             emit authSuccess();
         } else {
-            emit authFailed();
+            auto firstKey = response.value("first_errors").toObject().keys().at(0);
+            QString errorStr = firstKey + ": " + response.value("first_errors").toObject().value(firstKey).toString();
+            emit authFailed(errorStr);
         }
         break;
     }
     case RequestType::Projects: {
-        const QJsonObject &response = QJsonDocument::fromJson(reply->readAll()).object();
-
         emit projectsReceived(response);
         break;
     }
     case RequestType::ProjectInfo: {
-        const QJsonObject &response = QJsonDocument::fromJson(reply->readAll()).object();
-
         int projectId = response.value("project").toObject().value("id").toInt();
         emit projectInfoReceived(projectId, response);
         break;

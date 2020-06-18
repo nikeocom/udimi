@@ -35,7 +35,7 @@ public:
 
 signals:
     void authSuccess();
-    void authFailed();
+    void authFailed(const QString &error);
 
     void projectsReceived(const QJsonObject &projects);
     void projectInfoReceived(int projectId, const QJsonObject &projectInfo);

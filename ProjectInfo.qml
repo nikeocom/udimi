@@ -24,10 +24,10 @@ Rectangle {
         onProjectInfoReceived: {
             if (__impl.projectId == projectId) {
                 project = projectInfo.project
-                activeSwitch.checked = project.is_active == 1
+                activeSwitch.checked = project.is_active === 1
                 namefield.text = project.name
                 avatarImage.source = project.logo_url ? project.logo_url : ""
-                asWatcherSwitch.checked = project.is_owner_watcher == 1
+                asWatcherSwitch.checked = project.is_owner_watcher === 1
                 usersRepeater.model = project.users
             }
         }
@@ -60,9 +60,10 @@ Rectangle {
             spacing: 10
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: -10
 
                 Column {
-                    width: __layout.width - avatarImage.width
+                    width: __layout.width - avatarImage.width - 20
 
                     Row {
                         Text {
@@ -117,6 +118,8 @@ Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
                             id: namefield
                             width: 200
+                            height: 30
+                            selectByMouse: true
                         }
 
                         Item {
@@ -125,6 +128,7 @@ Rectangle {
                         }
 
                         Button {
+                            id: okButton
                             anchors.verticalCenter: parent.verticalCenter
                             enabled: !!project ? project.name != namefield.text : false
                             text: qsTr("OK")
@@ -132,17 +136,27 @@ Rectangle {
                             onClicked: {
                                 client.updateProjectName(__impl.projectId, namefield.text)
                             }
+
+                            background: Rectangle {
+                                color: "#3E5375"
+                            }
+
+                            contentItem: Label {
+                                color: "#FFFFFF"
+                                text: okButton.text
+                            }
                         }
                     } // Row
                 } // Column
 
-                Image {
+                CircularImage {
                     id: avatarImage
                     anchors.verticalCenter: parent.verticalCenter
                     width: 80
                     height: 80
                 }
-            }
+
+            } // Row
 
             Row {
                 id: usersColumn
@@ -162,14 +176,14 @@ Rectangle {
                         delegate: CheckBox {
                             id: userCheckbox
                             text: modelData.name
-                            property url image: modelData.avatar_url
+                            property url image: modelData.avatar_url ? modelData.avatar_url : ""
 
                             indicator: Rectangle {
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 10
-                                height: 10
+                                width: 12
+                                height: 12
                                 radius: 2
-                                border.color: "lightgray"
+                                border.color: "#161616"
                                 color: "transparent"
 
                                 Rectangle {
@@ -188,12 +202,22 @@ Rectangle {
                                     width: 5
                                     height: 1
                                 }
-
-                                Image {
+                                Item {
                                     width: 20
                                     height: 20
                                     anchors.verticalCenter: parent.verticalCenter
-                                    source: userCheckbox.image
+                                    CircularImage {
+                                        anchors.fill: parent
+                                        source: userCheckbox.image
+                                    }
+                                    Rectangle {
+                                        anchors.bottom: parent.bottom
+                                        anchors.right: parent.right
+                                        radius: 5
+                                        width: 10
+                                        height: 10
+                                        color: modelData.is_online ? "green" : "red"
+                                    }
                                 }
 
                                 Text {
